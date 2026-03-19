@@ -6,7 +6,6 @@ on:
   workflow_dispatch:
 
 env:
-  # Evita avisos de versiones antiguas de Node en el log
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -17,19 +16,16 @@ jobs:
       - name: Checkout repositorio
         uses: actions/checkout@v4
 
-      # Este paso es para confirmar dónde están los archivos realmente
-      - name: Listar archivos (Debug)
-        run: ls -R
+      - name: Listar archivos (Para estar 100% seguros)
+        run: ls -F
 
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          # Eliminamos el caché temporalmente para evitar errores de ruta
-          # Si esto funciona, luego podemos volver a activarlo
+          # Hemos quitado el caché para limpiar errores de rutas antiguas
 
       - name: Instalar dependencias
-        # Ejecutamos directamente en la raíz
         run: npm install
 
       - name: Ejecutar búsqueda
