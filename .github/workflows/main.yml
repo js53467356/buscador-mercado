@@ -6,7 +6,6 @@ on:
   workflow_dispatch:
 
 env:
-  # Forzamos Node 24 para evitar avisos de obsolescencia en 2026
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -22,27 +21,23 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
-          # Esta ruta debe ser exacta. Si el archivo está en la raíz, quita "buscador-mercado/"
-          cache-dependency-path: './package-lock.json'
+          # Eliminamos el prefijo de la carpeta si los archivos están en la raíz
+          cache-dependency-path: 'package-lock.json'
 
       - name: Instalar dependencias
-        # Usamos 'working-directory' para que npm sepa dónde entrar
-        working-directory: ./
+        # Eliminamos working-directory si los archivos están en la raíz
         run: npm install
 
-      - name: Ejecutar búsqueda de Lavadora relojes
-        working-directory: ./
+      - name: Ejecutar búsqueda
         run: node index.js
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
 
-      - name: Guardar historial de búsqueda
-        working-directory: ./
+      - name: Guardar historial
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          # Añadimos el archivo específico de la carpeta
           git add last_ids.json || exit 0
           git commit -m "Update history: [skip ci]" || exit 0
           git push
