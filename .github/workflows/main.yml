@@ -2,9 +2,12 @@ name: Wallapop Lavadora relojes Monitor
 
 on:
   schedule:
-    # Se ejecuta cada 30 minutos (puedes ajustarlo)
     - cron: '*/30 * * * *'
-  workflow_dispatch: # Permite ejecutarlo manualmente desde la web de GitHub
+  workflow_dispatch:
+
+env:
+  # Forzamos Node 24 para evitar avisos de obsolescencia en 2026
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
@@ -19,21 +22,27 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
-          cache-dependency-path: './buscador-mercado/package-lock.json' # Ajusta la ruta aquí
+          # Esta ruta debe ser exacta. Si el archivo está en la raíz, quita "buscador-mercado/"
+          cache-dependency-path: './package-lock.json'
 
       - name: Instalar dependencias
+        # Usamos 'working-directory' para que npm sepa dónde entrar
+        working-directory: ./
         run: npm install
 
       - name: Ejecutar búsqueda de Lavadora relojes
+        working-directory: ./
         run: node index.js
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
 
-      - name: Guardar historial de búsqueda (Evitar duplicados)
+      - name: Guardar historial de búsqueda
+        working-directory: ./
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # Añadimos el archivo específico de la carpeta
           git add last_ids.json || exit 0
           git commit -m "Update history: [skip ci]" || exit 0
           git push
