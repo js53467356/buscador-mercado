@@ -1,7 +1,7 @@
 {
   "name": "wallapop-alerts-seiko",
   "version": "1.0.0",
-  "description": "Bot de alertas para Seiko 5 en Wallapop vía Telegram",
+  "description": "Bot de alertas para lavadora relojes en Wallapop vía Telegram",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
