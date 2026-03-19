@@ -16,20 +16,31 @@ jobs:
       - name: Checkout repositorio
         uses: actions/checkout@v4
 
-      - name: Listar archivos (Para estar 100% seguros)
-        run: ls -F
-
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          # Hemos quitado el caché para limpiar errores de rutas antiguas
-
-      - name: Instalar dependencias
-        run: npm install
-
-      - name: Ejecutar búsqueda
-        run: node index.js
+      - name: Localizar archivos y ejecutar
+        run: |
+          echo "--- Directorio actual ---"
+          pwd
+          echo "--- Contenido del directorio ---"
+          ls -R
+          
+          # Buscamos dónde está el package.json realmente
+          PACKAGE_PATH=$(find . -name "package.json" -not -path "*/node_modules/*" | head -n 1)
+          
+          if [ -z "$PACKAGE_PATH" ]; then
+            echo "ERROR: No se encontró package.json en ningún lugar del repo."
+            exit 1
+          fi
+          
+          # Extraemos la carpeta donde está el package.json
+          DIR_PATH=$(dirname "$PACKAGE_PATH")
+          echo "--- Entrando en la carpeta: $DIR_PATH ---"
+          cd "$DIR_PATH"
+          
+          echo "--- Instalando dependencias ---"
+          npm install
+          
+          echo "--- Ejecutando script ---"
+          node index.js
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
@@ -38,6 +49,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add last_ids.json || exit 0
+          # Buscamos el archivo para añadirlo, esté donde esté
+          find . -name "last_ids.json" -exec git add {} +
           git commit -m "Update history: [skip ci]" || exit 0
           git push
