@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 env:
+  # Evita avisos de versiones antiguas de Node en el log
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -16,16 +17,19 @@ jobs:
       - name: Checkout repositorio
         uses: actions/checkout@v4
 
+      # Este paso es para confirmar dónde están los archivos realmente
+      - name: Listar archivos (Debug)
+        run: ls -R
+
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
-          # Eliminamos el prefijo de la carpeta si los archivos están en la raíz
-          cache-dependency-path: 'package-lock.json'
+          # Eliminamos el caché temporalmente para evitar errores de ruta
+          # Si esto funciona, luego podemos volver a activarlo
 
       - name: Instalar dependencias
-        # Eliminamos working-directory si los archivos están en la raíz
+        # Ejecutamos directamente en la raíz
         run: npm install
 
       - name: Ejecutar búsqueda
@@ -34,7 +38,7 @@ jobs:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
 
-      - name: Guardar historial
+      - name: Guardar historial de búsqueda
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
