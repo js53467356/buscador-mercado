@@ -7,11 +7,11 @@ const CHAT_ID = process.env.CHAT_ID;
 const HISTORY_FILE = 'last_ids.json';
 
 // Configuración de búsqueda
-const SEARCH_QUERY = "seiko 5";
+const SEARCH_QUERY = "lavadora relojes";
 const WALLAPOP_API_URL = `https://api.wallapop.com/api/v3/general/search?keywords=${encodeURIComponent(SEARCH_QUERY)}&latitude=40.416775&longitude=-3.703790`;
 
 async function notifyTelegram(item) {
-    const message = `⌚ *¡Nuevo Seiko 5 detectado!*\n\n` +
+    const message = `⌚ *¡Nuevo lavadora relojes detectado!*\n\n` +
                     `💰 Precio: ${item.price.amount} ${item.price.currency}\n` +
                     `📝 ${item.title}\n` +
                     `🔗 [Ver en Wallapop](https://es.wallapop.com/item/${item.web_slug})`;
