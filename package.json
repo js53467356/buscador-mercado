@@ -1,0 +1,12 @@
+{"name": "buscador-mercado",
+  "version": "1.0.0",
+  "description": "Scraper de Wallapop con avisos a Telegram",
+  "main": "scraper.js",
+  "scripts": {
+    "start": "node scraper.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.0"}}
